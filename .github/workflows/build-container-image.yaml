@@ -27,13 +27,6 @@ jobs:
           
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        
-      - name: Build the container image
-        uses: docker/build-push-action@v5
-        with:
-          tags: ${{ env.image_name }}
-          load: true
-          platforms: linux/arm/v7,linux/arm64
 
       - name: Log in to GitHub container registry
         if: github.event_name == 'push' || github.event_name == 'release'
@@ -43,12 +36,9 @@ jobs:
           password: ${{ github.token }}
           username: ${{ github.actor }}
 
-      - name: Push latest image to registry
-        if: github.event_name == 'push'
-        run: docker image push ${{ env.image_name }}
-
-      - name: Tag and push release image to registry
-        if: github.event_name == 'release'
-        run: |
-          docker image tag ${{ env.image_name }}:latest ${{ env.image_name }}:${{ github.event.release.tag_name }}
-          docker image push ${{ env.image_name }}:${{ github.event.release.tag_name }}
+      - name: Build the container image
+        uses: docker/build-push-action@v5
+        with:
+          tags: ${{ env.image_name }}
+          push: true
+          platforms: linux/arm/v7,linux/arm64
