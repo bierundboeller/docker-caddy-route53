@@ -33,6 +33,7 @@ jobs:
         with:
           tags: ${{ env.image_name }}
           load: true
+          platforms: linux/arm/v7,linux/arm64
 
       - name: Log in to GitHub container registry
         if: github.event_name == 'push' || github.event_name == 'release'
